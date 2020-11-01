@@ -17,7 +17,7 @@ var Schema = `
 		lastName: String
 	}
 	type Query{
-		person(id: ID!): Person
+		person(firstName: String!): Person
 	}
 `
 

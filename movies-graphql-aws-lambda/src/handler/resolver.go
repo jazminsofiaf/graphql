@@ -8,7 +8,7 @@ import (
 
 type Resolver struct{}
 
-var peopleData = make(map[graphql.ID]*Person)
+var peopleData = make(map[string]*Person)
 
 var people = []* Person{
 	{
@@ -28,12 +28,12 @@ var mainSchema *graphql.Schema
 
 func init() {
 	for _, p := range people {
-		peopleData[p.ID] = p
+		peopleData[p.FirstName] = p
 	}
 }
 
-func (r *Resolver) Person(args struct{ ID graphql.ID }) *PersonResolver {
-	if p := peopleData[args.ID]; p != nil {
+func (r *Resolver) Person(args struct{ FirstName string }) *PersonResolver {
+	if p := peopleData[args.FirstName]; p != nil {
 		log.Print("Found in resolver!/n")
 		return &PersonResolver{p}
 	}

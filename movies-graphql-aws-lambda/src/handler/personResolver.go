@@ -1,9 +1,7 @@
 package handler
 
-import "github.com/graph-gophers/graphql-go"
-
 type Person struct {
-	ID        graphql.ID
+	ID        string
 	FirstName string
 	LastName  string
 }
@@ -12,7 +10,7 @@ type PersonResolver struct {
 	P *Person
 }
 
-func (r *PersonResolver) ID() graphql.ID {
+func (r *PersonResolver) ID() string {
 	return r.P.ID
 }
 
