@@ -12,12 +12,15 @@ var Schema = `
 	schema {
 		query: Query
 	}
-	type Person {
-		firstName: String!
-		lastName: String
+	type Movie {
+		title: String!
+		plot: String
+		rating: Float
+		year: Int
+		
 	}
 	type Query{
-		person(firstName: String!): Person
+		movie(title: String!): Movie
 	}
 `
 
