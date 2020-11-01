@@ -7,9 +7,21 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"jaz.com/movies-graphql/movies-graphql-aws-lambda/src/client"
+	"jaz.com/movies-graphql/movies-graphql-aws-lambda/src/domain"
 	"jaz.com/movies-graphql/movies-graphql-aws-lambda/src/repository"
 	"log"
 )
+
+var moviesRepository *repository.MoviesRepository
+//var mainSchema *graphql.Schema
+
+func init(){
+	client, err := client.NewLocalClient()
+	if err != nil {
+		errors.New("error at creating Client")
+	}
+	moviesRepository = repository.NewMoviesRepository(client)
+}
 
 
 func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -22,15 +34,6 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return events.APIGatewayProxyResponse{}, err
 	}
 
-	client, err := client.NewLocalClient()
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, errors.New("error at creating Client")
-	}
-	moviesRepository := repository.NewMoviesRepository(client)
-	handler := NewHandler(moviesRepository)
-	handler.Handle("The Big New Movie", "2016")
-
-
 	return events.APIGatewayProxyResponse{
 		Body:       "",
 		StatusCode: 200,
@@ -38,32 +41,28 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 }
 
 type Handler struct{
-	moviesRepository repository.MoviesRepository
-}
-
-func NewHandler(repository *repository.MoviesRepository) *Handler {
-	this := new(Handler)
-	this.moviesRepository = *repository
-	return this
 }
 
 
-func (h Handler) Handle(movieName string , movieYear string)   {
 
+func (h Handler) Movie(args struct{ Title string; Rating *float64}) *domain.ItemResolver {
+	fmt.Println("------------------- all movies --------------")
+	movies, _:= moviesRepository.GetAllMoviesWithName(args.Title)
 
-	fmt.Print("------------------- looking for: ")
-	fmt.Print(movieName)
-	fmt.Println(movieYear)
-
-	movie, err := h.moviesRepository.GetMovie(movieName, movieYear)
-	if err != nil {
-		errors.New(fmt.Sprintf("Failed to unmarshal Record, %v", err))
+	if args.Rating == nil {
+		if i := &movies[0]; i != nil {
+			log.Println("First movie with that title!")
+			return &domain.ItemResolver{I: i}
+		}
 	}
 
-	fmt.Println("------------------- Found movie return answer --------------")
-	fmt.Println("Title: ", movie.Title)
-	fmt.Println("Plot: ", movie.Plot)
-	fmt.Println("Year: ", movie.Year)
-	fmt.Println("Rating:", movie.Rating)
-
+	moviesByRatingMap := make(map[float64]*domain.Item)
+	for _, m := range movies {
+		moviesByRatingMap[m.Rating] = &m
+	}
+	if i := moviesByRatingMap[*args.Rating]; i != nil {
+		log.Println("Found in resolver!")
+		return &domain.ItemResolver{I: i}
+	}
+	return nil
 }

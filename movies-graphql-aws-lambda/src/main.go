@@ -20,22 +20,25 @@ var Schema = `
 		
 	}
 	type Query{
-		movie(title: String!): Movie
+		movie(title: String! rating:Float): Movie
 	}
 `
 
 var mainSchema *graphql.Schema
 
 func init() {
-	mainSchema = graphql.MustParseSchema(Schema, &handler.Resolver{})
+	mainSchema = graphql.MustParseSchema(Schema, &handler.Handler{})
 }
 
 func main() {
+
 	http.Handle("/query", &relay.Handler{Schema: mainSchema})
 	log.Print("Starting to listen 8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
-	//input :=  "The Big New Movie"
-	//handler.HandleRequest(nil, input)
+	/*
+	input :=  "The Big New Movie"
+	handler.HandleRequest(nil, input)
+	 */
 	//lambda.Start(handler.HandleRequest)
 }
