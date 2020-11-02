@@ -35,14 +35,14 @@ Supongamos que en Dynamo tenemos la siguiente tabla Movies
 | La sirenita        | 1994  | Se trata de una sirena                  | 8.1 |
 
 
-####Pasos probarlo local
+#### Pasos probarlo local
 1. clonar el repo 
 2. buildearlo
 ```go build movies-graphql-aws-lambda/src/main.go```
 3. levantar el server local en el puerto 8080
 ```go run movies-graphql-aws-lambda/src/main.go```
 
-#####Ejemplo 1 de request
+##### Ejemplo 1 de request
 curl -XPOST -d '{"query":"query test {\n movie(title:\"The Big New Movie\"\n) {\n title\n year\n plot\n }\n}\n","variables":null,"operationName":"test"}' localhost:8080/query
 
 request:
@@ -68,7 +68,7 @@ response
 }
 ```
 
-#####Ejemplo 2 de request
+##### Ejemplo 2 de request
 curl -XPOST -d '{"query":"query test {\n movie(title:\"The Big New Movie\" rating:4.5\n) {\n title\n year\n plot\n rating\n }\n}\n","variables":null,"operationName":"test"}' localhost:8080/query
 
 request:
