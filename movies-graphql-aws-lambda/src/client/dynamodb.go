@@ -58,7 +58,7 @@ func  getLocalSession() (*session.Session, error) {
 	fmt.Println("running in local environment")
 	session, err := session.NewSessionWithOptions(session.Options{
 		// Specify profile to load for the session's config
-		Profile: "uala-arg-playground-dev",
+		Profile: "default",
 
 		// Provide SDK Config options, such as Region.
 		Config: aws.Config{
